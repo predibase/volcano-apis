@@ -41,6 +41,9 @@ const (
 	// enough resources to it.
 	PodGroupPending PodGroupPhase = "Pending"
 
+	// PodGroupAllocated means `spec.minMember` underlying tasks have successfully been allocated resources.
+	PodGroupAllocated PodGroupPhase = "Allocated"
+
 	// PodGroupRunning means `spec.minMember` pods of PodGroup has been in running phase.
 	PodGroupRunning PodGroupPhase = "Running"
 
