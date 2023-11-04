@@ -307,7 +307,7 @@ type QueueStatus struct {
 	Reservation Reservation `json:"reservation,omitempty" protobuf:"bytes,7,opt,name=reservation"`
 
 	// Allocated is allocated resources in queue
-	Allocated v1.ResourceList `json:"allocated" protobuf:"bytes,8,opt,name=allocated"`
+	Allocated v1.ResourceList `json:"allocated,omitempty" protobuf:"bytes,8,opt,name=allocated"`
 }
 
 // CluterSpec represents the template of Cluster
