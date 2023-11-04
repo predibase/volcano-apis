@@ -1,12 +1,9 @@
 /*
 Copyright 2019 The Volcano Authors.
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
-
     http://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -84,25 +81,25 @@ const (
 // PodGroupCondition contains details for the current state of this pod group.
 type PodGroupCondition struct {
 	// Type is the type of the condition
-	Type PodGroupConditionType `json:"type,omitempty" protobuf:"bytes,1,opt,name=type"`
+	Type PodGroupConditionType
 
 	// Status is the status of the condition.
-	Status v1.ConditionStatus `json:"status,omitempty" protobuf:"bytes,2,opt,name=status"`
+	Status v1.ConditionStatus
 
 	// The ID of condition transition.
-	TransitionID string `json:"transitionID,omitempty" protobuf:"bytes,3,opt,name=transitionID"`
+	TransitionID string
 
 	// Last time the phase transitioned from another to current phase.
 	// +optional
-	LastTransitionTime metav1.Time `json:"lastTransitionTime,omitempty" protobuf:"bytes,4,opt,name=lastTransitionTime"`
+	LastTransitionTime metav1.Time
 
 	// Unique, one-word, CamelCase reason for the phase's last transition.
 	// +optional
-	Reason string `json:"reason,omitempty" protobuf:"bytes,5,opt,name=reason"`
+	Reason string
 
 	// Human-readable message indicating details about last transition.
 	// +optional
-	Message string `json:"message,omitempty" protobuf:"bytes,6,opt,name=message"`
+	Message string
 }
 
 const (
@@ -148,28 +145,28 @@ const (
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 // +kubebuilder:object:root=true
 // +kubebuilder:resource:path=podgroups,shortName=pg;podgroup-v1beta1
+// PodGroup is a collection of Pod; used for batch workload.
 // +kubebuilder:printcolumn:name="STATUS",type=string,JSONPath=`.status.phase`
 // +kubebuilder:printcolumn:name="minMember",type=integer,JSONPath=`.spec.minMember`
 // +kubebuilder:printcolumn:name="RUNNINGS",type=integer,JSONPath=`.status.running`
 // +kubebuilder:printcolumn:name="AGE",type=date,JSONPath=`.metadata.creationTimestamp`
 // +kubebuilder:printcolumn:name="QUEUE",type=string,priority=1,JSONPath=`.spec.queue`
-
-// PodGroup is a collection of Pod; used for batch workload.
 type PodGroup struct {
-	metav1.TypeMeta `json:",inline"`
-
+	metav1.TypeMeta
+	// Standard object's metadata.
+	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 	// +optional
-	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+	metav1.ObjectMeta
 
 	// Specification of the desired behavior of the pod group.
 	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 	// +optional
-	Spec PodGroupSpec `json:"spec,omitempty" protobuf:"bytes,2,opt,name=spec"`
+	Spec PodGroupSpec
 
 	// Status represents the current information about a pod group.
 	// This data may not be up to date.
 	// +optional
-	Status PodGroupStatus `json:"status,omitempty" protobuf:"bytes,3,opt,name=status"`
+	Status PodGroupStatus
 }
 
 // PodGroupSpec represents the template of a pod group.
@@ -177,17 +174,16 @@ type PodGroupSpec struct {
 	// MinMember defines the minimal number of members/tasks to run the pod group;
 	// if there's not enough resources to start all tasks, the scheduler
 	// will not start anyone.
-	MinMember int32 `json:"minMember,omitempty" protobuf:"bytes,1,opt,name=minMember"`
+	MinMember int32
 
-	// MinTaskMember defines the minimal number of pods to run each task in the pod group;
+	// MinTaskMember defines the minimal number of pods to run for each task in the pod group;
 	// if there's not enough resources to start each task, the scheduler
 	// will not start anyone.
-	MinTaskMember map[string]int32 `json:"minTaskMember,omitempty" protobuf:"bytes,1,opt,name=minTaskMember"`
+	MinTaskMember map[string]int32
 
 	// Queue defines the queue to allocate resource for PodGroup; if queue does not exist,
-	// the PodGroup will not be scheduled. Defaults to `default` Queue with the lowest weight.
-	// +optional
-	Queue string `json:"queue,omitempty" protobuf:"bytes,2,opt,name=queue"`
+	// the PodGroup will not be scheduled.
+	Queue string
 
 	// If specified, indicates the PodGroup's priority. "system-node-critical" and
 	// "system-cluster-critical" are two special keywords which indicate the
@@ -196,49 +192,48 @@ type PodGroupSpec struct {
 	// If not specified, the PodGroup priority will be default or zero if there is no
 	// default.
 	// +optional
-	PriorityClassName string `json:"priorityClassName,omitempty" protobuf:"bytes,3,opt,name=priorityClassName"`
+	PriorityClassName string
 
 	// MinResources defines the minimal resource of members/tasks to run the pod group;
 	// if there's not enough resources to start all tasks, the scheduler
 	// will not start anyone.
-	MinResources *v1.ResourceList `json:"minResources,omitempty" protobuf:"bytes,4,opt,name=minResources"`
+	MinResources *v1.ResourceList
 }
 
 // PodGroupStatus represents the current state of a pod group.
 type PodGroupStatus struct {
 	// Current phase of PodGroup.
-	Phase PodGroupPhase `json:"phase,omitempty" protobuf:"bytes,1,opt,name=phase"`
+	Phase PodGroupPhase
 
 	// The conditions of PodGroup.
 	// +optional
-	Conditions []PodGroupCondition `json:"conditions,omitempty" protobuf:"bytes,2,opt,name=conditions"`
+	Conditions []PodGroupCondition
 
 	// The number of actively running pods.
 	// +optional
-	Running int32 `json:"running,omitempty" protobuf:"bytes,3,opt,name=running"`
+	Running int32
 
 	// The number of pods which reached phase Succeeded.
 	// +optional
-	Succeeded int32 `json:"succeeded,omitempty" protobuf:"bytes,4,opt,name=succeeded"`
+	Succeeded int32
 
 	// The number of pods which reached phase Failed.
 	// +optional
-	Failed int32 `json:"failed,omitempty" protobuf:"bytes,5,opt,name=failed"`
+	Failed int32
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 // +kubebuilder:object:root=true
-
 // PodGroupList is a collection of pod groups.
 type PodGroupList struct {
-	metav1.TypeMeta `json:",inline"`
+	metav1.TypeMeta
 	// Standard list metadata
 	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 	// +optional
-	metav1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+	metav1.ListMeta
 
 	// items is the list of PodGroup
-	Items []PodGroup `json:"items" protobuf:"bytes,2,rep,name=items"`
+	Items []PodGroup
 }
 
 const (
@@ -255,19 +250,20 @@ const (
 
 // Queue is a queue of PodGroup.
 type Queue struct {
-	metav1.TypeMeta `json:",inline"`
-
+	metav1.TypeMeta
+	// Standard object's metadata.
+	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 	// +optional
-	metav1.ObjectMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+	metav1.ObjectMeta
 
 	// Specification of the desired behavior of the queue.
 	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status
 	// +optional
-	Spec QueueSpec `json:"spec,omitempty" protobuf:"bytes,2,opt,name=spec"`
+	Spec QueueSpec
 
 	// The status of queue.
 	// +optional
-	Status QueueStatus `json:"status,omitempty" protobuf:"bytes,3,opt,name=status"`
+	Status QueueStatus
 }
 
 // Guarantee represents configuration of queue resource reservation
@@ -289,41 +285,41 @@ type Reservation struct {
 
 // QueueStatus represents the status of Queue.
 type QueueStatus struct {
-	// State is state of queue
-	State QueueState `json:"state,omitempty" protobuf:"bytes,1,opt,name=state"`
+	// State is status of queue
+	State QueueState
 
 	// The number of 'Unknown' PodGroup in this queue.
-	Unknown int32 `json:"unknown,omitempty" protobuf:"bytes,2,opt,name=unknown"`
+	Unknown int32
 	// The number of 'Pending' PodGroup in this queue.
-	Pending int32 `json:"pending,omitempty" protobuf:"bytes,3,opt,name=pending"`
+	Pending int32
 	// The number of 'Running' PodGroup in this queue.
-	Running int32 `json:"running,omitempty" protobuf:"bytes,4,opt,name=running"`
+	Running int32
 	// The number of `Inqueue` PodGroup in this queue.
-	Inqueue int32 `json:"inqueue,omitempty" protobuf:"bytes,5,opt,name=inqueue"`
+	Inqueue int32
 	// The number of `Completed` PodGroup in this queue.
-	Completed int32 `json:"completed,omitempty" protobuf:"bytes,6,opt,name=completed"`
+	Completed int32
 
 	// Reservation is the profile of resource reservation for queue
-	Reservation Reservation `json:"reservation,omitempty" protobuf:"bytes,7,opt,name=reservation"`
+	Reservation Reservation
 
 	// Allocated is allocated resources in queue
-	Allocated v1.ResourceList `json:"allocated" protobuf:"bytes,8,opt,name=allocated"`
+	Allocated v1.ResourceList
 }
 
 // CluterSpec represents the template of Cluster
 type Cluster struct {
-	Name     string          `json:"name,omitempty" protobuf:"bytes,1,opt,name=name"`
-	Weight   int32           `json:"weight,omitempty" protobuf:"bytes,2,opt,name=weight"`
-	Capacity v1.ResourceList `json:"capacity,omitempty" protobuf:"bytes,3,opt,name=capacity"`
+	Name     string
+	Weight   int32
+	Capacity v1.ResourceList
 }
 
 // Affinity is a group of affinity scheduling rules.
 type Affinity struct {
-	// Describes nodegroup affinity scheduling rules for the queue(e.g. putting pods of the queue in the nodes of the nodegroup)
+	// Describes nodegroup affinity scheduling rules for the queue.
 	// +optional
 	NodeGroupAffinity *NodeGroupAffinity `json:"nodeGroupAffinity,omitempty" protobuf:"bytes,1,opt,name=nodeGroupAffinity"`
 
-	// Describes nodegroup anti-affinity scheduling rules for the queue(e.g. avoid putting pods of the queue in the nodes of the nodegroup).
+	// Describes nodegroup affinity scheduling rules for the queue.
 	// +optional
 	NodeGroupAntiAffinity *NodeGroupAntiAffinity `json:"nodeGroupAntiAffinity,omitempty" protobuf:"bytes,2,opt,name=nodeGroupAntiAffinity"`
 }
@@ -344,19 +340,21 @@ type NodeGroupAntiAffinity struct {
 
 // QueueSpec represents the template of Queue.
 type QueueSpec struct {
-	Weight     int32           `json:"weight,omitempty" protobuf:"bytes,1,opt,name=weight"`
-	Capability v1.ResourceList `json:"capability,omitempty" protobuf:"bytes,2,opt,name=capability"`
+	Weight     int32
+	Capability v1.ResourceList
 
+	// Depreicated: replaced by status.State
+	State QueueState
 	// Reclaimable indicate whether the queue can be reclaimed by other queue
-	Reclaimable *bool `json:"reclaimable,omitempty" protobuf:"bytes,3,opt,name=reclaimable"`
+	Reclaimable *bool
 
 	// extendCluster indicate the jobs in this Queue will be dispatched to these clusters.
-	ExtendClusters []Cluster `json:"extendClusters,omitempty" protobuf:"bytes,4,opt,name=extendClusters"`
+	ExtendClusters []Cluster
 
 	// Guarantee indicate configuration about resource reservation
-	Guarantee Guarantee `json:"guarantee,omitempty" protobuf:"bytes,5,opt,name=guarantee"`
+	Guarantee Guarantee `json:"guarantee,omitempty" protobuf:"bytes,4,opt,name=guarantee"`
 
-	// If specified, the pod owned by the queue will be scheduled with constraint
+	// If specified, the queue's scheduling constraints
 	// +optional
 	Affinity *Affinity `json:"affinity,omitempty" protobuf:"bytes,6,opt,name=affinity"`
 
@@ -369,12 +367,12 @@ type QueueSpec struct {
 
 // QueueList is a collection of queues.
 type QueueList struct {
-	metav1.TypeMeta `json:",inline"`
+	metav1.TypeMeta
 	// Standard list metadata
 	// More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
 	// +optional
-	metav1.ListMeta `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+	metav1.ListMeta
 
 	// items is the list of PodGroup
-	Items []Queue `json:"items" protobuf:"bytes,2,rep,name=items"`
+	Items []Queue
 }
